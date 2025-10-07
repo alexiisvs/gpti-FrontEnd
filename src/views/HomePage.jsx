@@ -1,13 +1,20 @@
 import "../styles/HomePage.css";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
   return (
     <div className="home-container">
       <header className="home-header">
         <h1 className="brand">Bienvenidos: Homepage</h1>
         <div className="header-buttons">
-          <button className="btn">Demo 1</button>
-          <button className="btn">Demo 2</button>
+          <button className="btn" onClick={() => navigate("/demo-tts")}>
+            Demo 1
+          </button>
+          <button className="btn" disabled>
+            Demo 2
+          </button>
         </div>
       </header>
 
@@ -17,3 +24,4 @@ export default function HomePage() {
     </div>
   );
 }
+
