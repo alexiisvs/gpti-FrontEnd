@@ -1,0 +1,65 @@
+/* Colores base */
+:root {
+  --brand-purple: #7c3aed;
+  --dark-gray: #1f1f1f;
+  --light-gray: #e5e5e5;
+  --white: #ffffff;
+}
+
+/* Layout general */
+.home-container {
+  min-height: 100vh;
+  background-color: var(--dark-gray);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: #2b2b2b;
+  border-bottom: 1px solid var(--brand-purple);
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--brand-purple);
+}
+
+/* Botones superiores */
+.header-buttons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.btn {
+  background-color: transparent;
+  color: var(--white);
+  border: 1px solid var(--brand-purple);
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  background-color: var(--brand-purple);
+  color: var(--white);
+}
+
+/* Contenido */
+.home-content {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background-color: var(--dark-gray);
+  color: var(--light-gray);
+}
