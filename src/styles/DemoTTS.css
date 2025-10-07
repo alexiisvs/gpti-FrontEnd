@@ -1,3 +1,6 @@
+/* ================================
+   Colores base
+================================ */
 :root {
   --brand-purple: #7c3aed;
   --dark-gray: #1f1f1f;
@@ -5,25 +8,48 @@
   --white: #ffffff;
 }
 
+/* ================================
+   Reset general
+================================ */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================================
+   Contenedor principal
+================================ */
 .tts-container {
   min-height: 100vh;
-  background-color: var(--dark-gray);
-  color: var(--white);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  justify-content: flex-start; /* 👈 evita centrar en medio */
+  padding: 3rem 1rem 4rem;
+  background-color: var(--dark-gray);
+  color: var(--white);
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
+/* ================================
+   Título
+================================ */
 .tts-title {
   font-size: 1.8rem;
   color: var(--brand-purple);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
+/* ================================
+   Cuadro de texto
+================================ */
 .tts-textarea {
   width: 100%;
   max-width: 600px;
+  min-height: 120px;
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid var(--brand-purple);
@@ -31,6 +57,7 @@
   color: var(--white);
   font-size: 1rem;
   resize: none;
+  box-sizing: border-box;
 }
 
 .tts-textarea:focus {
@@ -38,10 +65,14 @@
   border-color: var(--white);
 }
 
+/* ================================
+   Botones
+================================ */
 .tts-buttons {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
 .btn-send,
@@ -49,7 +80,7 @@
   border: 1px solid var(--brand-purple);
   background-color: transparent;
   color: var(--white);
-  padding: 0.5rem 1.5rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
@@ -65,13 +96,15 @@
   background-color: #444;
 }
 
+/* ================================
+   Resultado
+================================ */
 .tts-result {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   font-size: 1.1rem;
   padding: 0.8rem 1rem;
   border-radius: 6px;
   text-align: center;
-  width: fit-content;
   min-width: 250px;
 }
 
@@ -84,3 +117,4 @@
   background-color: #5c2c2c;
   color: #f5b7b7;
 }
+

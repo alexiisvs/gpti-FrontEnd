@@ -1,4 +1,6 @@
-/* Colores base */
+/* ================================
+   Colores base
+================================ */
 :root {
   --brand-purple: #7c3aed;
   --dark-gray: #1f1f1f;
@@ -6,16 +8,28 @@
   --white: #ffffff;
 }
 
+/* ================================
+   Reset general y estructura
+================================ */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* Layout general */
 .home-container {
   min-height: 100vh;
-  background-color: var(--dark-gray);
-  color: var(--white);
   display: flex;
   flex-direction: column;
+  background-color: var(--dark-gray);
+  color: var(--white);
+  overflow-x: hidden;
 }
 
-/* Header */
+/* ================================
+   Header superior
+================================ */
 .home-header {
   display: flex;
   justify-content: space-between;
@@ -23,15 +37,18 @@
   padding: 1.5rem 2rem;
   background-color: #2b2b2b;
   border-bottom: 1px solid var(--brand-purple);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .brand {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 600;
   color: var(--brand-purple);
 }
 
-/* Botones superiores */
+/* Botones del header */
 .header-buttons {
   display: flex;
   gap: 0.8rem;
@@ -53,13 +70,19 @@
   color: var(--white);
 }
 
-/* Contenido */
+/* ================================
+   Contenido principal
+================================ */
 .home-content {
-  flex-grow: 1;
+  flex: 1; /* ocupa todo el espacio restante */
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* contenido arriba, no centrado */
+  padding: 3rem 1rem;
   font-size: 1.2rem;
-  background-color: var(--dark-gray);
   color: var(--light-gray);
+  text-align: center;
+  box-sizing: border-box;
 }
+
