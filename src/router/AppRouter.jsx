@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 
 // Vistas
 import Landing from "../views/Landing";
-import FeaturesPage from "../views/FeaturesPage";
+import FeaturesPage from "../views/Features";
 import DemoTTS from "../views/DemoTTS";
 import DemoLLM from "../views/DemoLLM";
 import Demos from "../views/Demos";
