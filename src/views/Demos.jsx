@@ -18,13 +18,13 @@ export default function Demos() {
         <div className="card">
           <div className="card__icon">🧪</div>
           <div>
-            <h3 className="card__title">Demo 1</h3>
+            <h3 className="card__title">Demo 1 - PDF</h3>
             <p className="card__text">
-              Próximamente…
+              Extrae texto de archivos PDF.
             </p>
-            <button className="btn" disabled style={{ opacity: 0.6 }}>
-              No disponible
-            </button>
+            <Link to="/demo/pdf" className="btn btn--primary">
+              Ir a Demo 1
+              </Link>
           </div>
         </div>
 
