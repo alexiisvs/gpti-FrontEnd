@@ -7,6 +7,7 @@ import Landing from "../views/Landing";
 import FeaturesPage from "../views/Features";
 import DemoTTS from "../views/DemoTTS";
 import DemoLLM from "../views/DemoLLM";
+import DemoPDF from "../views/DemoPDF";
 import Demos from "../views/Demos";
 import NotFound from "../views/NotFound";
 
@@ -36,6 +37,7 @@ export default function AppRouter() {
           {/* Demos individuales */}
           <Route path="/demo/tts" element={<DemoTTS />} />
           <Route path="/demo/llm" element={<DemoLLM />} />
+          <Route path="/demo/pdf" element={<DemoPDF />} />
 
           <Route path="*" element={<NotFound />} />
         </Route>

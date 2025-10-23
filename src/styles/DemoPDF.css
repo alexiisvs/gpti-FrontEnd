@@ -1,0 +1,88 @@
+:root {
+    --brand-purple: #7c3aed;
+    --dark: #1f1f1f;
+    --ok: #2d6a4f;
+    --ok-text: #b7f7cc;
+    --err: #5c2c2c;
+    --err-text: #f5b7b7;
+  }
+  
+  .pdf-container {
+    min-height: 100vh;
+    background: #0f0f0f;
+    color: #f1f1f1;
+    display: grid;
+    place-content: start center;
+    padding: 2rem 1rem;
+  }
+  
+  .pdf-card {
+    width: min(900px, 92vw);
+    background: #151515;
+    border: 1px solid #262626;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
+  
+  h2 {
+    margin-bottom: 14px;
+    color: #fff;
+  }
+  
+  .btns {
+    display: flex;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  
+  .btn {
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    color: #eaeaea;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  
+  .btn.primary {
+    background: var(--brand-purple);
+    border: none;
+    color: white;
+  }
+  
+  .pdf-status {
+    margin: 10px 0 16px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .pdf-status.ok {
+    background: var(--ok);
+    color: var(--ok-text);
+  }
+  .pdf-status.empty, .pdf-status.error {
+    background: var(--err);
+    color: var(--err-text);
+  }
+  
+  .out-label {
+    display: block;
+    margin: 8px 0;
+    opacity: 0.8;
+  }
+  
+  .out-text {
+    width: 100%;
+    min-height: 300px;
+    resize: vertical;
+    background: #0e0e0e;
+    color: #eaeaea;
+    border: 1px solid #2b2b2b;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    line-height: 1.4;
+  }
+  
