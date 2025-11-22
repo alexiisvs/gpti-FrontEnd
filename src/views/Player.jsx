@@ -574,6 +574,13 @@ export default function Player() {
             </select>
             <button 
               className="action-btn"
+              onClick={() => navigate(`/dashboard/flashpills/${documentId}`)}
+            >
+              <span className="material-symbols-outlined">auto_stories</span>
+              <span>Flash Pills</span>
+            </button>
+            <button 
+              className="action-btn"
               onClick={() => navigate(`/dashboard/chat/${documentId}`)}
             >
               <span className="material-symbols-outlined">chat</span>
