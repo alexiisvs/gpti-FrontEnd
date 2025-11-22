@@ -12,6 +12,7 @@ import Login from "../views/Login";
 import Dashboard from "../views/Dashboard";
 import FlashPills from "../views/FlashPills";
 import Chat from "../views/Chat";
+import Player from "../views/Player";
 import NotFound from "../views/NotFound";
 
 function Layout() {
@@ -47,6 +48,7 @@ export default function AppRouter() {
 
         {/* Dashboard sin Layout (tiene su propio sidebar) */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/player/:documentId" element={<Player />} />
         <Route path="/dashboard/flashpills" element={<FlashPills />} />
         <Route path="/dashboard/flashpills/:documentId" element={<FlashPills />} />
         <Route path="/dashboard/chat" element={<Chat />} />

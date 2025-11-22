@@ -11,11 +11,24 @@ export default function Dashboard() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [playingAudio, setPlayingAudio] = useState(null); // { docId, audio, progress, text, currentPosition, rate, elapsedTime, estimatedDuration, audioUrl }
+  const [generatingAudio, setGeneratingAudio] = useState(null); // docId del documento que está generando audio
+  const [showVoiceModal, setShowVoiceModal] = useState(false); // Modal para seleccionar voz
+  const [pendingDocId, setPendingDocId] = useState(null); // docId pendiente de generar audio
+  const [documentVoices, setDocumentVoices] = useState({}); // { docId: 'femenina' | 'masculina' }
   const audioRef = useRef(null);
 
   // Cargar documentos al montar el componente
   useEffect(() => {
     loadDocuments();
+    // Cargar preferencias de voz guardadas
+    const savedVoices = localStorage.getItem("documentVoices");
+    if (savedVoices) {
+      try {
+        setDocumentVoices(JSON.parse(savedVoices));
+      } catch (e) {
+        console.error("Error al cargar preferencias de voz:", e);
+      }
+    }
   }, []);
 
   const loadDocuments = async () => {
@@ -38,48 +51,78 @@ export default function Dashboard() {
         
         const data = await res.json();
         if (data.success && data.documents) {
-          // Combinar documentos del backend con los de localStorage (prioridad a backend)
           const backendDocs = data.documents;
           const savedDocs = localStorage.getItem("userDocuments");
           
-          if (savedDocs) {
-            try {
-              const localDocs = JSON.parse(savedDocs);
-              // Combinar: backend tiene prioridad, pero mantener textos de localStorage
-              const combinedDocs = backendDocs.map(backendDoc => {
-                const localDoc = localDocs.find(d => d.id === backendDoc.id);
-                return {
-                  ...backendDoc,
-                  name: backendDoc.filename || localDoc?.name || "", // Usar filename como name
-                  text: localDoc?.text || "", // Mantener texto de localStorage si existe
-                  date: localDoc?.date || new Date(backendDoc.createdAt).toLocaleDateString("es-ES", { 
+          // Si el backend devuelve documentos, combinarlos con localStorage
+          if (backendDocs.length > 0) {
+            if (savedDocs) {
+              try {
+                const localDocs = JSON.parse(savedDocs);
+                // Combinar: backend tiene prioridad, pero mantener textos de localStorage
+                const combinedDocs = backendDocs.map(backendDoc => {
+                  const localDoc = localDocs.find(d => d.id === backendDoc.id);
+                  return {
+                    ...backendDoc,
+                    name: backendDoc.filename || localDoc?.name || "", // Usar filename como name
+                    text: localDoc?.text || "", // Mantener texto de localStorage si existe
+                    date: localDoc?.date || new Date(backendDoc.createdAt).toLocaleDateString("es-ES", { 
+                      year: "numeric", 
+                      month: "long", 
+                      day: "numeric" 
+                    })
+                  };
+                });
+                setDocuments(combinedDocs);
+                localStorage.setItem("userDocuments", JSON.stringify(combinedDocs));
+                console.log("✅ Documentos combinados (backend + localStorage):", combinedDocs.length);
+                return;
+              } catch (e) {
+                console.log("Error al parsear documentos de localStorage");
+              }
+            }
+            
+            // Si no hay localStorage, usar solo backend
+            const formattedDocs = backendDocs.map(doc => ({
+              ...doc,
+              name: doc.filename || "", // Usar filename como name
+              date: new Date(doc.createdAt).toLocaleDateString("es-ES", { 
+                year: "numeric", 
+                month: "long", 
+                day: "numeric" 
+              })
+            }));
+            setDocuments(formattedDocs);
+            localStorage.setItem("userDocuments", JSON.stringify(formattedDocs));
+            console.log("✅ Documentos del backend guardados:", formattedDocs.length);
+            return;
+          } else {
+            // Si el backend devuelve array vacío, NO sobrescribir localStorage
+            // En su lugar, cargar desde localStorage
+            console.log("⚠️ Backend devolvió array vacío, cargando desde localStorage");
+            if (savedDocs) {
+              try {
+                const localDocs = JSON.parse(savedDocs);
+                const normalizedDocs = localDocs.map(doc => ({
+                  ...doc,
+                  name: doc.name || doc.filename || "Documento sin nombre",
+                  date: doc.date || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString("es-ES", { 
                     year: "numeric", 
                     month: "long", 
                     day: "numeric" 
-                  })
-                };
-              });
-              setDocuments(combinedDocs);
-              localStorage.setItem("userDocuments", JSON.stringify(combinedDocs));
-              return;
-            } catch (e) {
-              console.log("Error al parsear documentos de localStorage");
+                  }) : "Fecha desconocida")
+                }));
+                setDocuments(normalizedDocs);
+                console.log("✅ Documentos cargados desde localStorage (backend vacío):", normalizedDocs.length);
+                return;
+              } catch (e) {
+                console.error("Error al parsear documentos:", e);
+              }
             }
+            // Si no hay localStorage tampoco, dejar array vacío
+            setDocuments([]);
+            return;
           }
-          
-          // Si no hay localStorage, usar solo backend
-          const formattedDocs = backendDocs.map(doc => ({
-            ...doc,
-            name: doc.filename || "", // Usar filename como name
-            date: new Date(doc.createdAt).toLocaleDateString("es-ES", { 
-              year: "numeric", 
-              month: "long", 
-              day: "numeric" 
-            })
-          }));
-          setDocuments(formattedDocs);
-          localStorage.setItem("userDocuments", JSON.stringify(formattedDocs));
-          return;
         }
       } catch (error) {
         console.log("Backend no disponible o error:", error);
@@ -90,17 +133,25 @@ export default function Dashboard() {
       if (savedDocs) {
         try {
           const parsedDocs = JSON.parse(savedDocs);
+          console.log("📦 Documentos cargados desde localStorage:", parsedDocs.length);
           // Asegurar que todos los documentos tengan name (puede ser filename o name)
           const normalizedDocs = parsedDocs.map(doc => ({
             ...doc,
-            name: doc.name || doc.filename || "Documento sin nombre"
+            name: doc.name || doc.filename || "Documento sin nombre",
+            date: doc.date || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString("es-ES", { 
+              year: "numeric", 
+              month: "long", 
+              day: "numeric" 
+            }) : "Fecha desconocida")
           }));
           setDocuments(normalizedDocs);
+          console.log("✅ Documentos normalizados y establecidos:", normalizedDocs.length);
         } catch (e) {
           console.error("Error al parsear documentos:", e);
           setDocuments([]);
         }
       } else {
+        console.log("⚠️ No hay documentos en localStorage");
         setDocuments([]);
       }
     } catch (error) {
@@ -256,14 +307,37 @@ export default function Dashboard() {
           day: "numeric" 
         }),
         text: documentText, // Guardar texto para uso local
-        createdAt: new Date().toISOString() // Guardar fecha de creación para consistencia
+        createdAt: new Date().toISOString(), // Guardar fecha de creación para consistencia
+        pages: data.document?.pages || 0,
+        size: data.document?.textLength || 0,
+        status: 'processed'
       };
 
-      const updatedDocuments = [newDocument, ...documents];
+      // Obtener documentos existentes de localStorage primero
+      const existingDocs = localStorage.getItem("userDocuments");
+      let currentDocs = [];
+      if (existingDocs) {
+        try {
+          currentDocs = JSON.parse(existingDocs);
+        } catch (e) {
+          console.error("Error al parsear documentos existentes:", e);
+        }
+      }
+      
+      // Combinar con los documentos del estado actual
+      const allDocs = [...documents, ...currentDocs];
+      // Eliminar duplicados por ID
+      const uniqueDocs = allDocs.filter((doc, index, self) => 
+        index === self.findIndex(d => d.id === doc.id)
+      );
+      
+      // Agregar el nuevo documento al inicio
+      const updatedDocuments = [newDocument, ...uniqueDocs];
       setDocuments(updatedDocuments);
       
       // Guardar en localStorage para persistencia
       localStorage.setItem("userDocuments", JSON.stringify(updatedDocuments));
+      console.log("✅ Documento guardado en localStorage:", newDocument);
 
       alert("Archivo subido exitosamente");
     } catch (error) {
@@ -279,8 +353,8 @@ export default function Dashboard() {
   };
 
 
-  const handlePlay = async (docId) => {
-    console.log("handlePlay llamado para docId:", docId);
+  const handlePlay = async (docId, voiceType = null) => {
+    console.log("handlePlay llamado para docId:", docId, "voiceType:", voiceType);
     
     try {
       // Si ya hay un audio reproduciéndose del mismo documento, pausar/reanudar
@@ -305,6 +379,17 @@ export default function Dashboard() {
         }
         setPlayingAudio(null);
       }
+      
+      // Si no hay voz seleccionada para este documento, mostrar modal
+      const selectedVoice = voiceType || documentVoices[docId];
+      if (!selectedVoice) {
+        setPendingDocId(docId);
+        setShowVoiceModal(true);
+        return;
+      }
+      
+      // Mostrar indicador de carga
+      setGeneratingAudio(docId);
       
       // Obtener texto del documento
       console.log("Obteniendo texto para docId:", docId);
@@ -378,7 +463,11 @@ export default function Dashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ text: text.substring(0, 5000), lang: 'es' })
+        body: JSON.stringify({ 
+          text: text.substring(0, 5000), 
+          lang: 'es',
+          voiceType: selectedVoice // Usar la voz seleccionada
+        })
       });
 
       if (!ttsRes.ok) {
@@ -433,6 +522,15 @@ export default function Dashboard() {
           estimatedDuration: duration,
           audioUrl: audioUrl
         });
+        
+        // Limpiar el estado de generación cuando el audio está listo
+        setGeneratingAudio(null);
+      };
+      
+      audioRef.current.onplay = () => {
+        console.log("Audio empezó a reproducirse");
+        // Asegurar que el estado de generación esté limpio
+        setGeneratingAudio(null);
       };
       
       audioRef.current.ontimeupdate = () => {
@@ -462,6 +560,7 @@ export default function Dashboard() {
         console.error("Error en reproductor de audio:", error);
         alert("Error al reproducir el audio. Intenta de nuevo.");
         setPlayingAudio(null);
+        setGeneratingAudio(null); // Limpiar estado de generación en caso de error
         URL.revokeObjectURL(audioUrl);
       };
       
@@ -471,12 +570,89 @@ export default function Dashboard() {
       
     } catch (error) {
       console.error("Error al reproducir:", error);
+      setGeneratingAudio(null); // Limpiar estado de generación en caso de error
       alert(error.message || "Error al reproducir el documento. Asegúrate de que el documento esté procesado.");
     }
   };
 
   const handlePills = (docId) => {
     navigate(`/dashboard/flashpills/${docId}`);
+  };
+
+  const handleVoiceSelect = (voiceType) => {
+    if (pendingDocId) {
+      // Guardar la preferencia de voz para este documento
+      const newVoices = { ...documentVoices, [pendingDocId]: voiceType };
+      setDocumentVoices(newVoices);
+      localStorage.setItem("documentVoices", JSON.stringify(newVoices));
+      
+      // Cerrar modal y generar audio
+      setShowVoiceModal(false);
+      const docId = pendingDocId;
+      setPendingDocId(null);
+      
+      // Generar audio con la voz seleccionada
+      handlePlay(docId, voiceType);
+    }
+  };
+
+  const handleDeleteDocument = async (docId) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar este documento y sus audios? Esta acción no se puede deshacer.")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("authToken");
+      
+      // Eliminar en el backend
+      try {
+        const res = await fetch(`/api/v1/documents/${docId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error("Error al eliminar documento en el backend");
+        }
+      } catch (error) {
+        console.error("Error al eliminar documento en el backend:", error);
+      }
+
+      // Eliminar del localStorage
+      const savedDocs = localStorage.getItem("userDocuments");
+      if (savedDocs) {
+        try {
+          const docs = JSON.parse(savedDocs);
+          const updatedDocs = docs.filter(doc => doc.id !== docId);
+          localStorage.setItem("userDocuments", JSON.stringify(updatedDocs));
+        } catch (error) {
+          console.error("Error al actualizar localStorage:", error);
+        }
+      }
+      
+      // Eliminar del estado
+      setDocuments(prevDocs => prevDocs.filter(doc => doc.id !== docId));
+      
+      // Si el documento eliminado estaba reproduciéndose, detenerlo
+      if (playingAudio && playingAudio.docId === docId) {
+        setPlayingAudio(null);
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.src = '';
+        }
+      }
+      
+      if (generatingAudio === docId) {
+        setGeneratingAudio(null);
+      }
+
+      alert("Documento eliminado exitosamente.");
+    } catch (error) {
+      console.error("Error al eliminar documento:", error);
+      alert("Error al eliminar documento. Intenta de nuevo.");
+    }
   };
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -589,7 +765,11 @@ export default function Dashboard() {
             <div className="documents-list">
               {documents.map((doc) => (
               <div key={doc.id} className="document-item">
-                <div className="document-content">
+                <div 
+                  className="document-content"
+                  onClick={() => navigate(`/dashboard/player/${doc.id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="document-icon">
                     <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24">
                       <path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path>
@@ -599,12 +779,18 @@ export default function Dashboard() {
                     <p className="document-name">{doc.name || doc.filename || "Documento sin nombre"}</p>
                     <p className="document-date">Procesado el {doc.date}</p>
                   </div>
-                  <div className="document-actions">
+                  <div className="document-actions" onClick={(e) => e.stopPropagation()}>
                     <button 
                       className="btn btn--play"
                       onClick={() => handlePlay(doc.id)}
+                      disabled={generatingAudio === doc.id}
                     >
-                      {playingAudio && playingAudio.docId === doc.id && !playingAudio.isPaused ? (
+                      {generatingAudio === doc.id ? (
+                        <>
+                          <div className="spinner"></div>
+                          <span>Generando...</span>
+                        </>
+                      ) : playingAudio && playingAudio.docId === doc.id && !playingAudio.isPaused ? (
                         <>
                           <svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20">
                             <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm24-88a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h32A8,8,0,0,1,152,128Z"></path>
@@ -635,6 +821,20 @@ export default function Dashboard() {
                         <path d="M216.42,39.6a53.26,53.26,0,0,0-75.32,0L39.6,141.09a53.26,53.26,0,0,0,75.32,75.31h0L216.43,114.91A53.31,53.31,0,0,0,216.42,39.6ZM103.61,205.09h0a37.26,37.26,0,0,1-52.7-52.69L96,107.31,148.7,160ZM205.11,103.6,160,148.69,107.32,96l45.1-45.09a37.26,37.26,0,0,1,52.69,52.69ZM189.68,82.34a8,8,0,0,1,0,11.32l-24,24a8,8,0,1,1-11.31-11.32l24-24A8,8,0,0,1,189.68,82.34Z"></path>
                       </svg>
                       <span>Pills</span>
+                    </button>
+                    <button 
+                      className="btn btn--delete"
+                      onClick={() => handleDeleteDocument(doc.id)}
+                      title="Eliminar documento y sus audios"
+                      style={{ 
+                        background: 'transparent', 
+                        color: '#ff4444',
+                        border: '1px solid #ff4444',
+                        padding: '8px 12px',
+                        minWidth: 'auto'
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: '20px', margin: 0 }}>delete</span>
                     </button>
                   </div>
                 </div>
@@ -679,6 +879,44 @@ export default function Dashboard() {
           )}
         </section>
       </main>
+
+      {/* Modal para seleccionar tipo de voz */}
+      {showVoiceModal && (
+        <div className="voice-modal-overlay" onClick={() => {
+          setShowVoiceModal(false);
+          setPendingDocId(null);
+        }}>
+          <div className="voice-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Selecciona el tipo de voz</h3>
+            <p>Elige el tipo de voz para generar el audio de este documento</p>
+            <div className="voice-modal-buttons">
+              <button
+                className="voice-modal-btn"
+                onClick={() => handleVoiceSelect('femenina')}
+              >
+                <span className="material-symbols-outlined">person</span>
+                <span>Voz Femenina</span>
+              </button>
+              <button
+                className="voice-modal-btn"
+                onClick={() => handleVoiceSelect('masculina')}
+              >
+                <span className="material-symbols-outlined">person</span>
+                <span>Voz Masculina</span>
+              </button>
+            </div>
+            <button
+              className="voice-modal-cancel"
+              onClick={() => {
+                setShowVoiceModal(false);
+                setPendingDocId(null);
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
