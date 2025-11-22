@@ -21,7 +21,7 @@ export default function Navbar() {
         </nav>
 
         <div className="nav__actions">
-          <Link to="/demo/tts" className="btn btn--ghost">Iniciar Sesión</Link>
+          <Link to="/login" className="btn btn--ghost">Iniciar Sesión</Link>
           <Link to="/features" className="btn btn--primary">Comenzar</Link>
         </div>
       </div>

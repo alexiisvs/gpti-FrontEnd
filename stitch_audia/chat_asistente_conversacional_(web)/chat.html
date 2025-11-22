@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AudIA Conversational Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#47169c",
+              "background-light": "#f7f6f8",
+              "background-dark": "#171121",
+            },
+            fontFamily: {
+              display: ["Lexend"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex h-screen">
+<main class="flex-1 flex flex-col overflow-hidden">
+<header class="flex items-center justify-between border-b border-background-dark/10 dark:border-background-light/10 px-6 py-3 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="text-primary size-7">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path></svg>
+</div>
+<h1 class="text-lg font-bold text-gray-900 dark:text-white">AudIA</h1>
+</div>
+<nav class="hidden items-center gap-6 md:flex">
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary/90" href="#">Inicio</a>
+<a class="text-sm font-medium text-primary" href="#">Mis documentos</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary/90" href="#">Preguntas</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary/90" href="#">Flash Pills</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary/90" href="#">Ayuda</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20">
+<span class="material-symbols-outlined"> notifications </span>
+</button>
+<div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAhoAZOPKK5OQG6P4Clh5669LoWIQOdnr_t4KKfMfBZaO9llMbaZvnjEwQefnSZnRrYDvI-T7gC1PuM15-4T_jkIxSuz-BwtYewBFX1xD1kLb46jWDDn5lrRUPooX07SBAxpuTE7rPT1wejxUBJ8VcLTbvYHLg07_alUAmRPZz2qPae9YRlw8c3S5sGkQ2sHQrSJ41EFENKkHuhnHBZj4MppboWyAFELWJnzV_xWqoPiP1-xT9-hNRnht8uJSORjZeGXdU3XUPD8Ds");'></div>
+</div>
+</header>
+<div class="flex flex-col flex-1">
+<div class="flex-1 overflow-y-auto p-6">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">La Psicología del Aprendizaje</h2>
+<button class="flex items-center gap-2 rounded-lg bg-primary/90 px-4 py-2 text-sm font-bold text-white hover:bg-primary">
+<span class="material-symbols-outlined text-base">style</span>
+              Ver Flash Pills
+</button>
+</div>
+<p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+La psicología del aprendizaje es una rama de la psicología que se centra en cómo las personas adquieren, procesan y retienen nueva información y habilidades. Examina una variedad de influencias en el aprendizaje, incluyendo factores cognitivos, emocionales, sociales y ambientales. Uno de los conceptos fundamentales en este campo es el condicionamiento, tanto clásico como operante, que explora cómo las asociaciones entre estímulos y respuestas moldean el comportamiento. El condicionamiento clásico, popularizado por Ivan Pavlov, se refiere al aprendizaje a través de la asociación involuntaria de un estímulo neutro con un estímulo que provoca una respuesta natural. Por otro lado, el condicionamiento operante, desarrollado por B.F. Skinner, se centra en cómo las consecuencias de un comportamiento, como el refuerzo o el castigo, influyen en la probabilidad de que ese comportamiento se repita.
+<br/><br/>
+Además del condicionamiento, las teorías cognitivas del aprendizaje han ganado una importancia significativa. Estas teorías, a diferencia del conductismo, se centran en los procesos mentales internos como el pensamiento, la memoria, la resolución de problemas y el lenguaje. teóricos como Jean Piaget propusieron etapas de desarrollo cognitivo que los niños atraviesan, cada una caracterizada por distintas formas de pensar y razonar. Lev Vygotsky, por su parte, destacó la importancia del contexto social y cultural en el aprendizaje, introduciendo el concepto de la Zona de Desarrollo Próximo (ZDP), que es la diferencia entre lo que un aprendiz puede hacer sin ayuda y lo que puede lograr con la guía y el apoyo de un adulto o un compañero más capaz. Estas perspectivas subrayan que el aprendizaje es un proceso activo y constructivo en el que los individuos construyen su propio conocimiento y comprensión del mundo.
+</p>
+</div>
+<div class="border-t border-background-dark/10 dark:border-background-light/10 px-6 py-3 bg-background-light dark:bg-background-dark shadow-inner">
+<div class="flex items-center gap-4">
+<button class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary/90">
+<span class="material-symbols-outlined">pause</span>
+</button>
+<div class="flex-1 flex items-center gap-2">
+<span class="text-xs font-mono text-gray-500 dark:text-gray-400">1:23</span>
+<div class="flex-1 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 45%;"></div>
+</div>
+<span class="text-xs font-mono text-gray-500 dark:text-gray-400">3:45</span>
+</div>
+<div class="relative">
+<button class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary/90" onclick="this.nextElementSibling.classList.toggle('hidden')">
+<span class="material-symbols-outlined">speed</span>
+</button>
+<div class="absolute bottom-full right-0 mb-2 w-28 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hidden">
+<a class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" href="#">0.5x</a>
+<a class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" href="#">1x</a>
+<a class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" href="#">1.5x</a>
+<a class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" href="#">2x</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-full lg:w-96 flex flex-col border-l border-background-dark/10 dark:border-background-light/10 bg-background-light dark:bg-background-dark shadow-lg">
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<div class="flex items-start gap-4">
+<div class="size-8 shrink-0 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg">psychology</span>
+</div>
+<div class="flex flex-col items-start gap-1">
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">AudIA</p>
+<div class="rounded-lg rounded-tl-none bg-gray-200 dark:bg-background-dark/50 p-3">
+<p class="text-gray-800 dark:text-gray-200">Hola, estoy aquí para ayudarte con este documento. ¿Qué te gustaría saber?</p>
+</div>
+</div>
+</div>
+<div class="flex items-start justify-end gap-4">
+<div class="flex flex-col items-end gap-1">
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Tú</p>
+<div class="rounded-lg rounded-tr-none bg-primary p-3 text-white">
+<p>¿Quién fue el principal teórico del condicionamiento operante?</p>
+</div>
+</div>
+<div class="size-8 shrink-0 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLNfZgDKDXllZXwyArUKep9SheX5YUP4_O0kz-wTuSmKvRhz9vt6dp9blcKSPxBhkbk0BU1gpeHhZP1pDXJ9IAVLAXoI3oG-5j9zxj57AYO3q24cT_Hqn50dC5hqStJIKYuAG5B_IpLZFR75530-4P7_Au3b_B1ZZzxgMtAIVuQvtFwgwXa5qzbrQa4DYV5hr4KG3CAc31oQQuXYSsiWWtNmeJ_dXIl5FYFOEkUtncnowfsWajKvELUxRBbMvUdDJS8ajhE0JKnFY");'></div>
+</div>
+<div class="flex items-start gap-4">
+<div class="size-8 shrink-0 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg">psychology</span>
+</div>
+<div class="flex flex-col items-start gap-2">
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">AudIA</p>
+<div class="rounded-lg rounded-tl-none bg-gray-200 dark:bg-background-dark/50 p-3 space-y-2">
+<p class="text-gray-800 dark:text-gray-200">El principal teórico del condicionamiento operante fue B.F. Skinner.</p>
+<span class="text-xs text-primary dark:text-primary/90 block mt-1 font-medium">Capítulo 1, página 1</span>
+</div>
+<div class="flex flex-wrap gap-2 pt-1">
+<button class="flex items-center gap-2 rounded-lg bg-background-light dark:bg-background-dark/60 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20">
+<span class="material-symbols-outlined text-base"> volume_up </span>
+                    Escuchar respuesta
+                  </button>
+<button class="flex items-center gap-2 rounded-lg bg-primary/90 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary">
+<span class="material-symbols-outlined text-base"> bookmark_add </span>
+                    Guardar como Flash Pill
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-background-dark/10 dark:border-background-light/10 px-6 py-4">
+<div class="relative flex items-center">
+<input class="w-full rounded-full border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark py-2.5 pl-4 pr-20 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="Haz una pregunta..." type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-2">
+<button class="p-2 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary/90">
+<span class="material-symbols-outlined"> mic </span>
+</button>
+<button class="rounded-full bg-primary p-2 text-white hover:bg-primary/90">
+<span class="material-symbols-outlined"> send </span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+
+</body></html>

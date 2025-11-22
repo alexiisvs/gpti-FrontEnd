@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<title>AudIA - Flash Pills</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#47169c",
+            "background-light": "#f7f6f8",
+            "background-dark": "#171121",
+          },
+          fontFamily: {
+            "display": ["Lexend"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .card-actions button {
+      transition: all 0.2s ease-in-out;
+    }
+    .card-actions button:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<svg class="h-6 w-6" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">AudIA</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary" href="#">Home</a>
+<a class="text-sm font-medium text-primary dark:text-primary" href="#">Flash Pills</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary" href="#">Courses</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3">
+<svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</span>
+<input class="form-input block w-full rounded-lg border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark pl-10 pr-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary" placeholder="Search" type="search"/>
+</div>
+<button class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200">
+<span class="sr-only">View notifications</span>
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBA8wbssBVrk5mkHp952en2v9IlORRE9QrNnAuqfQlIaMcYtCRAYTMoCZjZdzLobq1yqzfqdR_zhX8sJ8o2d1D5YbIZf3M3xkfJwYwJc66fBicThlMEgpVUAts681nR9OMwnHJxMwi379luTQIM9NvtdoWYZLtZVkpreQlG94ajrFItBGdvjku1kHmpF7q7ENF1q3x6YX_kGqCDsZFSaEA0niQCaBQ3VgfQ-OsKyfo6uOtE2rQzfXf6IuH_LKwFUV0-VsM0Jfg5HJQ");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto">
+<div class="mb-10">
+<h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Flash Pills</h2>
+<p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Review cards for your selected document.</p>
+<div class="mt-6">
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="document-select">Select a Document</label>
+<div class="relative mt-1">
+<select class="form-select block w-full rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800/50 pl-3 pr-10 py-2 text-base text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary sm:text-sm" id="document-select">
+<option>History of Art - Chapter 3</option>
+<option>Introduction to Psychology - Chapter 1</option>
+<option>Calculus I - Integrals</option>
+</select>
+<span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+<svg aria-hidden="true" class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" fill-rule="evenodd"></path>
+</svg>
+</span>
+</div>
+</div>
+</div>
+<div class="space-y-12">
+<section id="micro-summary">
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Micro Summary</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group p-5 flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold text-gray-900 dark:text-white">Chapter 3: The Renaissance</h4>
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">A concise overview of the key events, figures, and ideas of the Renaissance period, focusing on its impact on art and culture.</p>
+</div>
+<div class="card-actions flex items-center gap-2 mt-4">
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill-rule="evenodd"></path></svg> Edit</button>
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg> Listen</button>
+</div>
+</div>
+</div>
+</section>
+<section id="flashcards">
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Flashcards</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group p-5 flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold text-gray-900 dark:text-white">What was the Renaissance?</h4>
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">A period of renewed interest in classical art, literature, and philosophy.</p>
+</div>
+<div class="card-actions flex items-center gap-2 mt-4">
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill-rule="evenodd"></path></svg> Edit</button>
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg> Listen</button>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group p-5 flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold text-gray-900 dark:text-white">Key Figures of the Renaissance</h4>
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Leonardo da Vinci, Michelangelo, Raphael, and other influential artists and thinkers.</p>
+</div>
+<div class="card-actions flex items-center gap-2 mt-4">
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill-rule="evenodd"></path></svg> Edit</button>
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg> Listen</button>
+</div>
+</div>
+</div>
+</section>
+<section id="highlight-concepts">
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Highlight Concepts</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group p-5 flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold text-gray-900 dark:text-white">Humanism</h4>
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">A philosophical stance that emphasizes the value and agency of human beings.</p>
+</div>
+<div class="card-actions flex items-center gap-2 mt-4">
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill-rule="evenodd"></path></svg> Edit</button>
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg> Listen</button>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group p-5 flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold text-gray-900 dark:text-white">Perspective in Art</h4>
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">The technique of creating an illusion of depth on a flat surface, crucial during the Renaissance.</p>
+</div>
+<div class="card-actions flex items-center gap-2 mt-4">
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill-rule="evenodd"></path></svg> Edit</button>
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg> Listen</button>
+</div>
+</div>
+</div>
+</section>
+<section id="saved-pills">
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Saved Pills</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group p-5 flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold text-gray-900 dark:text-white">The Printing Press</h4>
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Its invention and impact on the dissemination of knowledge during the Renaissance.</p>
+</div>
+<div class="card-actions flex items-center gap-2 mt-4">
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill-rule="evenodd"></path></svg> Edit</button>
+<button class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-white p-2 rounded-lg flex-grow flex items-center justify-center gap-2"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg> Listen</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+</body></html>

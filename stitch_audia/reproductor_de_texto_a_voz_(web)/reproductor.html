@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#47169c",
+              "background-light": "#f7f6f8",
+              "background-dark": "#171121",
+            },
+            fontFamily: {
+              display: ["Lexend"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex h-auto min-h-screen w-full flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-primary/20 dark:border-primary/30 px-10 py-3">
+<div class="flex items-center gap-4 text-gray-800 dark:text-white">
+<span class="material-symbols-outlined text-primary text-3xl"> music_note </span>
+<h2 class="text-lg font-bold">AudIA</h2>
+</div>
+<div class="flex flex-1 justify-end items-center gap-8">
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-sm font-medium hover:text-primary" href="#">Inicio</a>
+<a class="text-sm font-medium hover:text-primary" href="#">Mis documentos</a>
+<a class="text-sm font-medium hover:text-primary" href="#">Explorar</a>
+</nav>
+<button class="flex items-center justify-center rounded-full size-10 bg-primary/10 hover:bg-primary/20 text-primary">
+<span class="material-symbols-outlined"> help </span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDC81TwWdFPGXDl1bvqggk9BHtlHVi_NQcQOrQmTTji16fH0c7mskRrQO2SpnZLUuSet776aRddgchpDj8K5AdLglOUPzbCyGw4vHZHlQkfBLWoW7NAUr4PHH4EXsr7cOOA4uK7NiGUnMMp8cKGaZmygjdPEuIqojOWP7xz465V2toa1yuyRQ7K1Q4aYFOY3G1OIytOCwzLesaJATkfAiRubgklWuJtwQoorn1qDaezRi4Ue8c1L5Ynt81HPOOuxv0J-dwWDgI5Sfc");'></div>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="w-full max-w-2xl">
+<div class="text-center mb-8">
+<h1 class="text-3xl sm:text-4xl font-bold tracking-tight">El impacto de la IA en la educación</h1>
+</div>
+<div class="bg-white/5 dark:bg-black/10 rounded-xl p-6 sm:p-8 shadow-lg">
+<div class="flex flex-col items-center gap-6">
+<div class="relative w-64 h-64">
+<div class="absolute inset-0 bg-center bg-no-repeat aspect-square bg-cover rounded-xl" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBuFyo0GqKFj0jgFIjt9KwEP1HA-lBAhO6zSwhgOPTe3W5iS80XL-jinVlC5bd4n0XLWdyZ6s06CY5V8BS6Uejaq5v2Ar6hb318pOrXlhsbWgLtoR5XXu6W2Ji4rRpFHUZ43S4tHvhKjevcbwr6Lq_0houQw0O0DBjauK6GcVhe0Tp_FWdaJVmRFxWlkZPo0r2o6nLZTWzF4HSpduSPfP3-acMNdjMjAqj3fVFHEkAllPv_xrg4h8Xfv9FYUId10GWX3TZIsv_Any8");'></div>
+</div>
+<div class="w-full">
+<div class="mb-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">1:17</span>
+<span class="text-sm font-medium">2:23</span>
+</div>
+<div class="w-full bg-primary/20 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 50%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between gap-4 sm:gap-6">
+<button class="flex shrink-0 items-center justify-center rounded-full size-12 text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-3xl"> replay_10 </span>
+</button>
+<button class="flex shrink-0 items-center justify-center rounded-full size-16 bg-primary text-white shadow-lg hover:bg-primary/90">
+<span class="material-symbols-outlined text-4xl"> play_arrow </span>
+</button>
+<button class="flex shrink-0 items-center justify-center rounded-full size-12 text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-3xl"> forward_10 </span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-primary/20 dark:border-primary/30">
+<h3 class="text-lg font-bold mb-4">Opciones de reproducción</h3>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium mb-2" for="speed">Velocidad de lectura</label>
+<div class="flex items-center gap-4">
+<span>0.75x</span>
+<input class="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary" id="speed" max="1.5" min="0.75" step="0.25" type="range" value="1"/>
+<span>1.5x</span>
+</div>
+</div>
+<div>
+<p class="block text-sm font-medium mb-2">Tipo de voz</p>
+<div class="flex flex-wrap gap-3">
+<label class="flex items-center justify-center rounded-lg border border-primary/30 px-4 py-2 text-sm font-medium cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:border-primary transition-colors">
+<input checked="" class="sr-only" name="voice" type="radio"/>
+                      Voz masculina
+                    </label>
+<label class="flex items-center justify-center rounded-lg border border-primary/30 px-4 py-2 text-sm font-medium cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:border-primary transition-colors">
+<input class="sr-only" name="voice" type="radio"/>
+                      Voz femenina
+                    </label>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-primary/20 dark:border-primary/30 flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold leading-normal tracking-wide transition-colors w-full sm:w-auto">
+<span class="material-symbols-outlined">podcasts</span>
+<span>Escuchar como podcast</span>
+</button>
+<button class="flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold leading-normal tracking-wide transition-colors w-full sm:w-auto">
+<span class="material-symbols-outlined">chat</span>
+<span>Preguntar al asistente</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

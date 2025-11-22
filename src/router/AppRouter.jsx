@@ -8,6 +8,10 @@ import FeaturesPage from "../views/Features";
 import DemoTTS from "../views/DemoTTS";
 import DemoLLM from "../views/DemoLLM";
 import Demos from "../views/Demos";
+import Login from "../views/Login";
+import Dashboard from "../views/Dashboard";
+import FlashPills from "../views/FlashPills";
+import Chat from "../views/Chat";
 import NotFound from "../views/NotFound";
 
 function Layout() {
@@ -29,6 +33,7 @@ export default function AppRouter() {
         <Route element={<Layout />}>
           <Route path="/" element={<Landing />} />
           <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/login" element={<Login />} />
 
           {/* Hub de demos */}
           <Route path="/demo" element={<Demos />} />
@@ -39,6 +44,13 @@ export default function AppRouter() {
 
           <Route path="*" element={<NotFound />} />
         </Route>
+
+        {/* Dashboard sin Layout (tiene su propio sidebar) */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/flashpills" element={<FlashPills />} />
+        <Route path="/dashboard/flashpills/:documentId" element={<FlashPills />} />
+        <Route path="/dashboard/chat" element={<Chat />} />
+        <Route path="/dashboard/chat/:documentId" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   );

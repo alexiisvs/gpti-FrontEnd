@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AudIA - Accesibilidad y Aprendizaje Asistido con IA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#47169c",
+              "background-light": "#f7f6f8",
+              "background-dark": "#171121",
+            },
+            fontFamily: {
+              display: ["Lexend"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+      .gradient-overlay {
+        background-image: linear-gradient(rgba(23, 17, 33, 0.5) 0%, rgba(23, 17, 33, 0.8) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAUC2Bb9T9cxFYZSn31NBMHOZqiccVn6ERWrbrPxbLnIPsBum8kPXafKmKfkgXjoQEfb3c6ZoYUou1GGrNAGrqD8KVk_hV4IhA_6S51RmyK07Hcocm3Hmei2Sjsdq998dW6LUiIwu-xkSQdACXFs21801assnXGqQ76581hhTSFJy4FURqCPGE2FSuG2EY8ULzUYuX2Rryha9SYyPqjC1WgS80mEMCKO_TVYbTGsLj8p9cb54-NkQSlR6dN0qYeXptjxo7K0hUuks");
+      }
+      html.light .gradient-overlay {
+        background-image: linear-gradient(rgba(247, 246, 248, 0.5) 0%, rgba(247, 246, 248, 0.8) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAUC2Bb9T9cxFYZSn31NBMHOZqiccVn6ERWrbrPxbLnIPsBum8kPXafKmKfkgXjoQEfb3c6ZoYUou1GGrNAGrqD8KVk_hV4IhA_6S51RmyK07Hcocm3Hmei2Sjsdq998dW6LUiIwu-xkSQdACXFs21801assnXGqQ76581hhTSFJy4FURqCPGE2FSuG2EY8ULzUYuX2Rryha9SYyPqjC1WgS80mEMCKO_TVYbTGsLj8p9cb54-NkQSlR6dN0qYeXptjxo7K0hUuks");
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<header class="sticky top-0 z-50 w-full border-b border-primary/20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+<a class="flex items-center gap-3" href="#">
+<svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path></svg>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">AudIA</h2>
+</a>
+<nav class="hidden items-center gap-8 lg:flex">
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Inicio</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Funcionalidades</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Recursos</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Contacto</a>
+</nav>
+<div class="flex items-center gap-2">
+<a class="hidden sm:inline-flex items-center justify-center rounded-lg h-10 px-4 text-sm font-bold bg-primary/20 dark:bg-primary/30 text-primary hover:bg-primary/30 dark:hover:bg-primary/40 transition-colors" href="#">
+              Iniciar Sesión
+            </a>
+<a class="inline-flex items-center justify-center rounded-lg h-10 px-4 text-sm font-bold bg-primary text-white hover:bg-primary/90 transition-colors" href="#">
+              Comenzar
+            </a>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<section class="relative py-24 sm:py-32 lg:py-40">
+<div class="absolute inset-0 gradient-overlay bg-cover bg-center bg-no-repeat"></div>
+<div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+<h1 class="text-4xl font-black tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+              Accesibilidad y aprendizaje asistido con IA
+            </h1>
+<p class="mt-6 text-lg leading-8 text-gray-800 dark:text-gray-300">
+              AudIA es una aplicación web educativa diseñada para mejorar el aprendizaje inclusivo mediante el uso de inteligencia artificial. Ofrecemos herramientas y recursos adaptados a diversas necesidades de aprendizaje.
+            </p>
+<div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+<a class="inline-flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 text-base font-bold bg-primary text-white shadow-lg hover:bg-primary/90 transition-transform hover:scale-105" href="#">
+                Comenzar
+              </a>
+<a class="inline-flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 text-base font-bold bg-white dark:bg-primary/20 text-primary dark:text-white shadow-lg hover:bg-gray-100 dark:hover:bg-primary/30 transition-transform hover:scale-105" href="#">
+                Iniciar Sesión
+              </a>
+</div>
+</div>
+</section>
+<section class="py-20 sm:py-28 bg-background-light dark:bg-background-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-3xl text-center">
+<h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+                Funcionalidades principales
+              </h2>
+<p class="mt-4 text-lg text-gray-600 dark:text-gray-400">
+                Descubre cómo AudIA puede transformar la experiencia de aprendizaje para todos.
+              </p>
+</div>
+<div class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+<div class="flex flex-col gap-4 rounded-xl border border-primary/20 bg-background-light dark:bg-primary/10 p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+<svg class="text-primary" fill="currentColor" height="28px" viewBox="0 0 256 256" width="28px" xmlns="http://www.w3.org/2000/svg"><path d="M224,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h64a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"></path></svg>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">Aprendizaje personalizado</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">
+                    Adaptamos el contenido y las herramientas a las necesidades individuales de cada estudiante, asegurando una experiencia de aprendizaje única y efectiva.
+                  </p>
+</div>
+</div>
+<div class="flex flex-col gap-4 rounded-xl border border-primary/20 bg-background-light dark:bg-primary/10 p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+<svg class="text-primary" fill="currentColor" height="28px" viewBox="0 0 256 256" width="28px" xmlns="http://www.w3.org/2000/svg"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">Comunidad inclusiva</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">
+                    Fomentamos un entorno colaborativo donde estudiantes y educadores pueden compartir recursos y experiencias, promoviendo la inclusión y el apoyo mutuo.
+                  </p>
+</div>
+</div>
+<div class="flex flex-col gap-4 rounded-xl border border-primary/20 bg-background-light dark:bg-primary/10 p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-1">
+<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+<svg class="text-primary" fill="currentColor" height="28px" viewBox="0 0 256 256" width="28px" xmlns="http://www.w3.org/2000/svg"><path d="M216,40H136V24a8,8,0,0,0-16,0V40H40A16,16,0,0,0,24,56V176a16,16,0,0,0,16,16H79.36L57.75,219a8,8,0,0,0,12.5,10l29.59-37h56.32l29.59,37a8,8,0,1,0,12.5-10l-21.61-27H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,136H40V56H216V176ZM104,120v24a8,8,0,0,1-16,0V120a8,8,0,0,1,16,0Zm32-16v40a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm32-16v56a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Z"></path></svg>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">Seguimiento del progreso</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">
+                    Ofrecemos herramientas de análisis para que estudiantes y educadores puedan monitorear el progreso, identificar áreas de mejora y celebrar los logros.
+                  </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-background-light dark:bg-background-dark border-t border-primary/20">
+<div class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+<div class="flex flex-col items-center justify-between gap-6 md:flex-row">
+<div class="flex flex-wrap justify-center gap-x-6 gap-y-2 md:justify-start">
+<a class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">Política de privacidad</a>
+<a class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">Términos de servicio</a>
+<a class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">Contacto</a>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400">© 2024 AudIA. Todos los derechos reservados.</p>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>
