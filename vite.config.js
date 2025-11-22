@@ -8,7 +8,20 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:3000', // ⬅️ backend
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        // Configurar para manejar respuestas binarias (audio)
+        configure: (proxy, _options) => {
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            // Si es una respuesta de audio, asegurar que los headers se mantengan
+            if (proxyRes.headers['content-type']?.includes('audio')) {
+              res.setHeader('Content-Type', proxyRes.headers['content-type']);
+              res.setHeader('Content-Length', proxyRes.headers['content-length']);
+            }
+          });
+        }
+      }
     },
   },
 })

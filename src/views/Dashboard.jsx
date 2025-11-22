@@ -10,7 +10,8 @@ export default function Dashboard() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [playingAudio, setPlayingAudio] = useState(null); // { docId, audio, progress }
+  const [playingAudio, setPlayingAudio] = useState(null); // { docId, audio, progress, text, currentPosition, rate, elapsedTime, estimatedDuration, audioUrl }
+  const audioRef = useRef(null);
 
   // Cargar documentos al montar el componente
   useEffect(() => {
@@ -277,73 +278,34 @@ export default function Dashboard() {
     }
   };
 
+
   const handlePlay = async (docId) => {
     console.log("handlePlay llamado para docId:", docId);
     
     try {
       // Si ya hay un audio reproduciéndose del mismo documento, pausar/reanudar
-      if (playingAudio && playingAudio.docId === docId) {
-        const isCurrentlyPaused = playingAudio.isPaused || window.speechSynthesis.paused;
-        const isCurrentlySpeaking = window.speechSynthesis.speaking;
-        
-        console.log("Estado actual:", {
-          isCurrentlyPaused,
-          isCurrentlySpeaking,
-          playingAudioIsPaused: playingAudio.isPaused,
-          speechSynthesisPaused: window.speechSynthesis.paused,
-          speechSynthesisSpeaking: window.speechSynthesis.speaking
-        });
-        
-        if (isCurrentlySpeaking && !isCurrentlyPaused) {
-          // Pausar
-          console.log("Pausando audio...");
-          window.speechSynthesis.pause();
-          // Actualizar estado inmediatamente usando función de callback
-          setPlayingAudio(prev => {
-            if (prev && prev.docId === docId) {
-              const newState = {
-                ...prev,
-                isPaused: true
-              };
-              console.log("Estado actualizado a pausado:", newState);
-              return newState;
-            }
-            return prev;
-          });
-          return;
-        } else if (isCurrentlyPaused) {
-          // Reanudar
-          console.log("Reanudando audio...");
-          window.speechSynthesis.resume();
-          // Actualizar estado inmediatamente usando función de callback
-          setPlayingAudio(prev => {
-            if (prev && prev.docId === docId) {
-              const newState = {
-                ...prev,
-                isPaused: false
-              };
-              console.log("Estado actualizado a reproduciendo:", newState);
-              return newState;
-            }
-            return prev;
-          });
+      if (playingAudio && playingAudio.docId === docId && audioRef.current) {
+        // Usar reproductor HTML5 si está disponible
+        if (audioRef.current.paused) {
+          audioRef.current.play();
+          setPlayingAudio(prev => ({ ...prev, isPaused: false }));
           return;
         } else {
-          // Si no está hablando, cancelar y permitir que se reinicie
-          console.log("Cancelando audio anterior...");
-          window.speechSynthesis.cancel();
-          setPlayingAudio(null);
-          // Continuar para iniciar nueva reproducción
+          audioRef.current.pause();
+          setPlayingAudio(prev => ({ ...prev, isPaused: true }));
+          return;
         }
       }
-
+      
       // Si hay otro audio reproduciéndose, detenerlo
       if (playingAudio && playingAudio.docId !== docId) {
-        console.log("Deteniendo otro audio...");
-        window.speechSynthesis.cancel();
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.src = '';
+        }
         setPlayingAudio(null);
       }
-
+      
       // Obtener texto del documento
       console.log("Obteniendo texto para docId:", docId);
       const token = localStorage.getItem("authToken");
@@ -405,204 +367,107 @@ export default function Dashboard() {
       if (!text || text.trim().length === 0) {
         alert("No se pudo obtener el texto del documento. Por favor, espera unos segundos y vuelve a intentar, o sube el documento nuevamente.");
         console.error("Texto vacío para el documento:", docId);
-        console.log("Documentos en localStorage:", savedDocs);
         return;
       }
       
-      // Usar Web Speech API del navegador para TTS
-      if (!('speechSynthesis' in window)) {
-        alert("Tu navegador no soporta síntesis de voz. Por favor, usa Chrome, Edge o Safari.");
-        console.error("speechSynthesis no disponible");
-        return;
-      }
-
-      // Verificar que no haya una síntesis en curso
-      if (window.speechSynthesis.speaking) {
-        console.log("Cancelando síntesis anterior...");
-        window.speechSynthesis.cancel();
-        await new Promise(resolve => setTimeout(resolve, 200));
-      }
-
-      const textToSpeak = text.substring(0, 10000); // Limitar a 10000 caracteres
-      console.log("Iniciando síntesis de voz con", textToSpeak.length, "caracteres");
-      
-      // Crear utterance
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'es-ES';
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      
-      console.log("Utterance creado:", {
-        lang: utterance.lang,
-        rate: utterance.rate,
-        pitch: utterance.pitch,
-        volume: utterance.volume,
-        textLength: utterance.text.length
+      // Usar gTTS para generar audio (permite control de posición)
+      console.log("Generando audio con gTTS...");
+      const ttsRes = await fetch('/api/v1/tts/speak', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ text: text.substring(0, 5000), lang: 'es' })
       });
 
-      // Calcular duración estimada (aproximadamente 150 palabras por minuto)
-      const words = textToSpeak.split(/\s+/).length;
-      const estimatedDuration = (words / 150) * 60; // en segundos
-      let startTime = Date.now();
+      if (!ttsRes.ok) {
+        const errorText = await ttsRes.text();
+        console.error("Error del backend:", errorText);
+        throw new Error('Error al generar el audio: ' + (errorText || ttsRes.statusText));
+      }
 
-      // Estado inicial
-      let progressInterval = null;
+      // Verificar que la respuesta sea audio
+      const contentType = ttsRes.headers.get('content-type');
+      console.log("Content-Type recibido:", contentType);
+      
+      if (!contentType || !contentType.includes('audio')) {
+        const errorText = await ttsRes.text();
+        console.error("El backend no devolvió audio, devolvió:", errorText);
+        throw new Error('El servidor no devolvió un archivo de audio válido');
+      }
 
-      utterance.onstart = () => {
-        console.log("✅ Audio iniciado correctamente");
-        startTime = Date.now();
+      // Crear URL del blob de audio
+      const audioBlob = await ttsRes.blob();
+      console.log("Blob creado, tamaño:", audioBlob.size, "bytes, tipo:", audioBlob.type);
+      
+      if (audioBlob.size === 0) {
+        throw new Error('El archivo de audio está vacío');
+      }
+      
+      const audioUrl = URL.createObjectURL(audioBlob);
+      console.log("URL del audio creada:", audioUrl);
+      
+      // Configurar reproductor HTML5
+      if (!audioRef.current) {
+        // Crear elemento audio si no existe
+        const audio = document.createElement('audio');
+        audioRef.current = audio;
+      }
+      
+      audioRef.current.src = audioUrl;
+      audioRef.current.playbackRate = playingAudio?.rate || 1.0;
+      
+      // Configurar eventos del reproductor
+      audioRef.current.onloadedmetadata = () => {
+        const duration = audioRef.current.duration;
+        console.log("Audio cargado, duración:", duration, "segundos");
+        
         setPlayingAudio({
           docId,
-          speechSynthesis: utterance,
           progress: 0,
-          isPaused: false
+          isPaused: false,
+          text: text,
+          rate: playingAudio?.rate || 1.0,
+          elapsedTime: 0,
+          estimatedDuration: duration,
+          audioUrl: audioUrl
         });
-        
-        // Actualizar progreso cada 100ms
-        progressInterval = setInterval(() => {
-          if (!window.speechSynthesis.paused && window.speechSynthesis.speaking) {
-            const elapsed = (Date.now() - startTime) / 1000; // segundos
-            const progress = Math.min((elapsed / estimatedDuration) * 100, 100);
-            setPlayingAudio(prev => {
-              if (prev && prev.docId === docId) {
-                return {
-                  ...prev,
-                  progress: Math.round(progress)
-                };
-              }
-              return prev;
-            });
-          }
-        }, 100);
       };
-
-      utterance.onend = () => {
+      
+      audioRef.current.ontimeupdate = () => {
+        if (audioRef.current && playingAudio && playingAudio.docId === docId) {
+          const currentTime = audioRef.current.currentTime;
+          const duration = audioRef.current.duration;
+          const progress = (currentTime / duration) * 100;
+          
+          setPlayingAudio(prev => ({
+            ...prev,
+            progress: Math.round(progress),
+            elapsedTime: currentTime
+          }));
+        }
+      };
+      
+      audioRef.current.onended = () => {
         console.log("Audio terminado");
-        if (progressInterval) {
-          clearInterval(progressInterval);
-        }
         setPlayingAudio(null);
-      };
-
-      utterance.onerror = (error) => {
-        // Ignorar el error "canceled" - es normal cuando cancelamos una síntesis anterior
-        if (error.error === 'canceled') {
-          console.log("⚠️ Síntesis cancelada (esto es normal cuando se cancela una síntesis anterior)");
-          return;
+        if (audioRef.current) {
+          audioRef.current.src = '';
         }
-        
-        console.error("❌ Error en síntesis de voz:", error);
-        console.error("Error details:", {
-          error: error.error,
-          type: error.type,
-          charIndex: error.charIndex,
-          charLength: error.charLength,
-          utterance: error.utterance
-        });
-        
-        // Mensajes de error más específicos
-        let errorMessage = "Error al reproducir el audio.";
-        if (error.error === 'not-allowed') {
-          errorMessage = "Permiso denegado para usar síntesis de voz. Verifica los permisos del navegador.";
-        } else if (error.error === 'network') {
-          errorMessage = "Error de red al reproducir el audio.";
-        } else if (error.error === 'synthesis-failed') {
-          errorMessage = "La síntesis de voz falló. Intenta con otro navegador.";
-        } else if (error.error === 'synthesis-unavailable') {
-          errorMessage = "La síntesis de voz no está disponible en tu navegador.";
-        } else if (error.error === 'text-too-long') {
-          errorMessage = "El texto es demasiado largo para reproducir.";
-        } else if (error.error === 'invalid-argument') {
-          errorMessage = "Argumento inválido en la síntesis de voz.";
-        }
-        
-        if (progressInterval) {
-          clearInterval(progressInterval);
-        }
-        setPlayingAudio(null);
-        alert(errorMessage);
+        URL.revokeObjectURL(audioUrl);
       };
       
-      // Nota: SpeechSynthesis no tiene eventos onpause/onresume en el utterance
-      // El estado se maneja directamente en handlePlay
-
-      // Verificar que speechSynthesis esté disponible
-      if (!window.speechSynthesis) {
-        throw new Error("speechSynthesis no está disponible");
-      }
-
-      // Cancelar cualquier síntesis anterior antes de iniciar una nueva
-      window.speechSynthesis.cancel();
-      
-      // Esperar un momento para que se cancele completamente
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      console.log("Llamando a window.speechSynthesis.speak()...");
-      console.log("Estado antes de speak:", {
-        speaking: window.speechSynthesis.speaking,
-        pending: window.speechSynthesis.pending,
-        paused: window.speechSynthesis.paused
-      });
-      
-      // Intentar activar la síntesis de voz (algunos navegadores requieren esto)
-      try {
-        // Forzar la activación de la API
-        const voices = window.speechSynthesis.getVoices();
-        console.log("Voces disponibles:", voices.length);
-        
-        if (voices.length === 0) {
-          // Esperar a que las voces se carguen
-          console.log("Esperando a que se carguen las voces...");
-          await new Promise(resolve => {
-            const checkVoices = () => {
-              const loadedVoices = window.speechSynthesis.getVoices();
-              if (loadedVoices.length > 0) {
-                console.log("Voces cargadas:", loadedVoices.length);
-                resolve();
-              } else {
-                setTimeout(checkVoices, 100);
-              }
-            };
-            checkVoices();
-          });
-        }
-      } catch (e) {
-        console.warn("Error al obtener voces:", e);
-      }
+      audioRef.current.onerror = (error) => {
+        console.error("Error en reproductor de audio:", error);
+        alert("Error al reproducir el audio. Intenta de nuevo.");
+        setPlayingAudio(null);
+        URL.revokeObjectURL(audioUrl);
+      };
       
       // Reproducir
-      try {
-        window.speechSynthesis.speak(utterance);
-        console.log("✅ speak() llamado exitosamente");
-      } catch (speakError) {
-        console.error("❌ Error al llamar speak():", speakError);
-        throw speakError;
-      }
-      
-      console.log("Estado después de speak:", {
-        speaking: window.speechSynthesis.speaking,
-        pending: window.speechSynthesis.pending,
-        paused: window.speechSynthesis.paused
-      });
-      
-      // Verificar después de un momento si se inició
-      setTimeout(() => {
-        console.log("Estado después de 1000ms:", {
-          speaking: window.speechSynthesis.speaking,
-          pending: window.speechSynthesis.pending,
-          paused: window.speechSynthesis.paused
-        });
-        
-        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
-          console.warn("⚠️ El audio no se inició después de 1 segundo.");
-          console.warn("Esto puede deberse a:");
-          console.warn("1. Permisos del navegador bloqueados");
-          console.warn("2. Política de autoplay del navegador");
-          console.warn("3. Problema con la API de síntesis de voz");
-          alert("El audio no se pudo iniciar. Por favor, verifica que tu navegador tenga permisos para reproducir audio. Si el problema persiste, intenta hacer clic en Play nuevamente.");
-        }
-      }, 1000);
+      await audioRef.current.play();
+      console.log("✅ Audio iniciado con reproductor HTML5");
       
     } catch (error) {
       console.error("Error al reproducir:", error);
@@ -779,7 +644,28 @@ export default function Dashboard() {
                       <span>En escucha</span>
                       <span>{playingAudio.progress}%</span>
                     </div>
-                    <div className="progress-bar">
+                    <div 
+                      className="progress-bar progress-bar--interactive"
+                      onClick={(e) => {
+                        if (!audioRef.current) return;
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const clickX = e.clientX - rect.left;
+                        const percentage = clickX / rect.width;
+                        const duration = audioRef.current.duration || playingAudio.estimatedDuration || 0;
+                        const newTime = percentage * duration;
+                        
+                        // Cambiar posición sin pausar
+                        audioRef.current.currentTime = newTime;
+                        
+                        // Actualizar estado
+                        const progress = (newTime / duration) * 100;
+                        setPlayingAudio(prev => ({
+                          ...prev,
+                          elapsedTime: newTime,
+                          progress: Math.round(progress)
+                        }));
+                      }}
+                    >
                       <div 
                         className="progress-fill" 
                         style={{ width: `${playingAudio.progress}%` }}
