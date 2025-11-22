@@ -40,7 +40,27 @@ export default function Login() {
         }),
       });
 
-      const data = await res.json();
+      // Verificar si la respuesta tiene contenido antes de parsear JSON
+      const contentType = res.headers.get("content-type");
+      let data;
+      
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          const text = await res.text();
+          data = text ? JSON.parse(text) : {};
+        } catch (parseError) {
+          console.error("Error al parsear JSON:", parseError);
+          setError("Error en la respuesta del servidor. Verifica que el backend esté corriendo correctamente.");
+          setLoading(false);
+          return;
+        }
+      } else {
+        // Si no es JSON, intentar leer como texto
+        const text = await res.text();
+        setError(`Error del servidor: ${text || "Error desconocido"}. Verifica que el backend esté corriendo en http://localhost:3000`);
+        setLoading(false);
+        return;
+      }
 
       if (!res.ok) {
         setError(data.message || "Error al iniciar sesión");
@@ -60,7 +80,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Error de login:", err);
-      setError("Error de conexión. Verifica que el backend esté corriendo.");
+      setError("Error de conexión. Verifica que el backend esté corriendo en http://localhost:3000");
     } finally {
       setLoading(false);
     }

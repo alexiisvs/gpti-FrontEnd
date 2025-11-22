@@ -704,6 +704,12 @@ export default function Dashboard() {
             </svg>
             <span>Chat</span>
           </a>
+          <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); navigate("/dashboard/accessibility"); }}>
+            <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24">
+              <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48.44-85.25-64,40a8,8,0,0,1-8.17-11.5L160,128,104.28,97.25a8,8,0,0,1,8.17-11.5l64,40A8,8,0,0,1,176.44,130.75Z"></path>
+            </svg>
+            <span>Modo Accesibilidad</span>
+          </a>
           <a href="#" className="nav-item">
             <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24">
               <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>

@@ -13,6 +13,9 @@ import Dashboard from "../views/Dashboard";
 import FlashPills from "../views/FlashPills";
 import Chat from "../views/Chat";
 import Player from "../views/Player";
+import AccessibilityMode from "../views/AccessibilityMode";
+import CalendarSuccess from "../views/CalendarSuccess";
+import CalendarError from "../views/CalendarError";
 import NotFound from "../views/NotFound";
 
 function Layout() {
@@ -48,11 +51,14 @@ export default function AppRouter() {
 
         {/* Dashboard sin Layout (tiene su propio sidebar) */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/accessibility" element={<AccessibilityMode />} />
         <Route path="/dashboard/player/:documentId" element={<Player />} />
         <Route path="/dashboard/flashpills" element={<FlashPills />} />
         <Route path="/dashboard/flashpills/:documentId" element={<FlashPills />} />
         <Route path="/dashboard/chat" element={<Chat />} />
         <Route path="/dashboard/chat/:documentId" element={<Chat />} />
+        <Route path="/dashboard/calendar-success" element={<CalendarSuccess />} />
+        <Route path="/dashboard/calendar-error" element={<CalendarError />} />
       </Routes>
     </BrowserRouter>
   );

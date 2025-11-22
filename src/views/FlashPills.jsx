@@ -66,47 +66,114 @@ export default function FlashPills() {
         }
       });
 
+      let backendDocs = [];
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.documents && data.documents.length > 0) {
-          console.log('✅ Documentos cargados del backend:', data.documents.length);
-          setDocuments(data.documents);
-        } else {
-          // Fallback a localStorage
-          const savedDocs = localStorage.getItem("userDocuments");
-          if (savedDocs) {
-            const parsed = JSON.parse(savedDocs);
-            console.log('✅ Documentos cargados de localStorage:', parsed.length);
-            setDocuments(parsed);
-          } else {
-            console.log('⚠️ No hay documentos disponibles');
-            setDocuments([]);
-          }
+          backendDocs = data.documents;
+          console.log('✅ Documentos cargados del backend:', backendDocs.length);
         }
+      }
+
+      // Siempre cargar también desde localStorage para tener el texto
+      const savedDocs = localStorage.getItem("userDocuments");
+      let localDocs = [];
+      if (savedDocs) {
+        try {
+          localDocs = JSON.parse(savedDocs);
+          console.log('✅ Documentos cargados de localStorage:', localDocs.length);
+        } catch (e) {
+          console.error('Error al parsear documentos de localStorage:', e);
+        }
+      }
+
+      // Combinar: usar documentos del backend pero mantener textos de localStorage
+      if (backendDocs.length > 0 && localDocs.length > 0) {
+        const combined = backendDocs.map(backendDoc => {
+          const localDoc = localDocs.find(d => d.id === backendDoc.id);
+          return {
+            ...backendDoc,
+            name: backendDoc.filename || localDoc?.name || "",
+            filename: backendDoc.filename || localDoc?.filename || "",
+            text: localDoc?.text || "", // Mantener texto de localStorage
+            date: localDoc?.date || new Date(backendDoc.createdAt).toLocaleDateString("es-ES", {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            })
+          };
+        });
+        // Agregar documentos que solo están en localStorage
+        const onlyLocal = localDocs.filter(localDoc => !backendDocs.find(bd => bd.id === localDoc.id));
+        setDocuments([...combined, ...onlyLocal]);
+        console.log('✅ Documentos combinados:', combined.length + onlyLocal.length);
+      } else if (backendDocs.length > 0) {
+        setDocuments(backendDocs);
+      } else if (localDocs.length > 0) {
+        setDocuments(localDocs);
       } else {
-        // Fallback a localStorage
-        const savedDocs = localStorage.getItem("userDocuments");
-        if (savedDocs) {
-          const parsed = JSON.parse(savedDocs);
-          console.log('✅ Documentos cargados de localStorage (fallback):', parsed.length);
-          setDocuments(parsed);
-        } else {
-          console.log('⚠️ No hay documentos disponibles');
-          setDocuments([]);
-        }
+        console.log('⚠️ No hay documentos disponibles');
+        setDocuments([]);
       }
     } catch (error) {
       console.error("Error al cargar documentos:", error);
       // Fallback a localStorage
       const savedDocs = localStorage.getItem("userDocuments");
       if (savedDocs) {
-        const parsed = JSON.parse(savedDocs);
-        console.log('✅ Documentos cargados de localStorage (error):', parsed.length);
-        setDocuments(parsed);
+        try {
+          const parsed = JSON.parse(savedDocs);
+          console.log('✅ Documentos cargados de localStorage (error):', parsed.length);
+          setDocuments(parsed);
+        } catch (e) {
+          console.error('Error al parsear documentos:', e);
+          setDocuments([]);
+        }
       } else {
         console.log('⚠️ No hay documentos disponibles');
         setDocuments([]);
       }
+    }
+  };
+
+  const syncDocumentToBackend = async (document) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error('❌ No hay token de autenticación');
+        return false;
+      }
+      
+      const payload = {
+        id: document.id,
+        filename: document.filename || document.name,
+        text: document.text,
+        createdAt: document.createdAt || new Date().toISOString()
+      };
+      
+      console.log('📤 Enviando sincronización:', { id: payload.id, filename: payload.filename, textLength: payload.text.length });
+      
+      // Crear un documento temporal en el backend con el texto
+      const response = await fetch('/api/v1/documents/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Documento sincronizado al backend:', data);
+        return true;
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Error al sincronizar documento:', response.status, errorText);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Error al sincronizar documento:', error);
+      return false;
     }
   };
 
@@ -145,13 +212,99 @@ export default function FlashPills() {
       } else if (res.status === 404) {
         // Documento no existe en el backend (solo en localStorage)
         console.warn('⚠️ Documento no encontrado en el backend. Solo existe en localStorage.');
-        setDocumentNotFound(true);
-        setPills({
-          microSummary: null,
-          flashcards: [],
-          highlightConcepts: [],
-          savedPills: []
-        });
+        
+        // Intentar sincronizar el documento al backend si tiene texto
+        let localDoc = documents.find(d => d.id === docId);
+        console.log('🔍 Buscando documento en localStorage:', { docId, found: !!localDoc, hasText: !!(localDoc?.text), textLength: localDoc?.text?.length });
+        
+        // Si no se encuentra en el estado, intentar cargarlo desde localStorage directamente
+        if (!localDoc) {
+          const savedDocs = localStorage.getItem("userDocuments");
+          if (savedDocs) {
+            try {
+              const parsed = JSON.parse(savedDocs);
+              localDoc = parsed.find(d => d.id === docId);
+              console.log('🔍 Documento encontrado en localStorage directo:', { found: !!localDoc, hasText: !!(localDoc?.text), textLength: localDoc?.text?.length });
+            } catch (e) {
+              console.error('Error al parsear documentos de localStorage:', e);
+            }
+          }
+        }
+        
+        // Si el documento no tiene texto, intentar obtenerlo del backend
+        if (localDoc && (!localDoc.text || localDoc.text.length === 0)) {
+          console.log('📥 Intentando obtener texto del documento desde el backend...');
+          try {
+            const textRes = await fetch(`/api/v1/documents/${docId}/text`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            if (textRes.ok) {
+              const textData = await textRes.json();
+              if (textData.text && textData.text.length > 0) {
+                localDoc.text = textData.text;
+                console.log('✅ Texto obtenido del backend:', textData.text.length, 'caracteres');
+              }
+            }
+          } catch (e) {
+            console.error('Error al obtener texto del backend:', e);
+          }
+        }
+        
+        if (localDoc && localDoc.text && localDoc.text.length > 0) {
+          console.log('🔄 Intentando sincronizar documento al backend...', { id: localDoc.id, filename: localDoc.filename || localDoc.name, textLength: localDoc.text.length });
+          const synced = await syncDocumentToBackend(localDoc);
+          
+          if (synced) {
+            // Si se sincronizó exitosamente, intentar cargar las pills de nuevo
+            console.log('✅ Documento sincronizado, recargando pills...');
+            setDocumentNotFound(false);
+            // Esperar un momento para que el backend procese
+            await new Promise(resolve => setTimeout(resolve, 500));
+            // Recargar pills después de sincronizar (con skipGeneration para evitar loops)
+            const pillsRes = await fetch(`/api/v1/documents/${docId}/pills`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            if (pillsRes.ok) {
+              const pillsData = await pillsRes.json();
+              if (pillsData.success && pillsData.pills) {
+                setPills(pillsData.pills);
+                // Generar pills si no existen
+                const needsGeneration = !pillsData.pills.microSummary || 
+                                        !pillsData.pills.flashcards.length || 
+                                        !pillsData.pills.highlightConcepts.length;
+                if (needsGeneration && !skipGeneration) {
+                  console.log('🔄 Generando pills faltantes después de sincronizar...');
+                  await generateAllPills(docId);
+                }
+              }
+            } else {
+              console.error('❌ Error al cargar pills después de sincronizar:', pillsRes.status);
+            }
+            return; // Salir temprano si se sincronizó exitosamente
+          } else {
+            console.error('❌ No se pudo sincronizar el documento al backend');
+            setDocumentNotFound(true);
+            setPills({
+              microSummary: null,
+              flashcards: [],
+              highlightConcepts: [],
+              savedPills: []
+            });
+          }
+        } else {
+          console.warn('⚠️ Documento no tiene texto disponible para sincronizar');
+          setDocumentNotFound(true);
+          setPills({
+            microSummary: null,
+            flashcards: [],
+            highlightConcepts: [],
+            savedPills: []
+          });
+        }
         // No intentar generar pills si el documento no existe en el backend
       } else if (!skipGeneration) {
         // Si hay otro error, intentar generar pills solo una vez

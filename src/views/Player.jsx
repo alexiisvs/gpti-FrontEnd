@@ -14,6 +14,12 @@ export default function Player() {
   const [speed, setSpeed] = useState(1.0);
   const [voiceType, setVoiceType] = useState("femenina"); // 'femenina' o 'masculina'
   const [showVoiceCustomModal, setShowVoiceCustomModal] = useState(false); // Modal para estilos personalizados
+  const [showScheduleModal, setShowScheduleModal] = useState(false); // Modal para programar repasos
+  const [isGoogleCalendarConnected, setIsGoogleCalendarConnected] = useState(false); // Estado de conexión con Google Calendar
+  const [scheduleDays, setScheduleDays] = useState([]); // Días seleccionados para repaso
+  const [scheduleTime, setScheduleTime] = useState('09:00'); // Hora del repaso
+  const [scheduleDuration, setScheduleDuration] = useState(52); // Duración en semanas (52 = 1 año, 0 = infinito)
+  const [scheduling, setScheduling] = useState(false); // Estado de carga al programar
   const voiceStyles = {
     profesor: {
       name: "Profesor Estricto",
@@ -55,6 +61,7 @@ export default function Player() {
 
   useEffect(() => {
     loadDocument();
+    checkGoogleCalendarAuth();
     // Cargar preferencia de voz guardada para este documento
     const savedVoices = localStorage.getItem("documentVoices");
     if (savedVoices) {
@@ -234,6 +241,154 @@ export default function Player() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Verificar si Google Calendar está conectado
+  const checkGoogleCalendarAuth = async () => {
+    try {
+      const userId = localStorage.getItem('userEmail') || 'default-user';
+      const res = await fetch(`/api/v1/calendar/check-auth/${encodeURIComponent(userId)}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setIsGoogleCalendarConnected(data.authenticated || false);
+      }
+    } catch (error) {
+      console.error('Error al verificar autenticación de Google Calendar:', error);
+      setIsGoogleCalendarConnected(false);
+    }
+  };
+
+  // Conectar con Google Calendar
+  const connectGoogleCalendar = async () => {
+    try {
+      const res = await fetch('/api/v1/calendar/auth', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authUrl) {
+          window.location.href = data.authUrl;
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener URL de autenticación:', error);
+      alert('Error al conectar con Google Calendar');
+    }
+  };
+
+  // Programar repasos
+  const handleScheduleReview = async () => {
+    if (scheduleDays.length === 0) {
+      alert('Por favor, selecciona al menos un día de la semana');
+      return;
+    }
+
+    if (!scheduleTime) {
+      alert('Por favor, selecciona una hora');
+      return;
+    }
+
+    try {
+      setScheduling(true);
+      const userId = localStorage.getItem('userEmail');
+      
+      if (!userId) {
+        alert('No se encontró tu información de Google Calendar. Por favor, conecta tu cuenta nuevamente.');
+        connectGoogleCalendar();
+        setScheduling(false);
+        return;
+      }
+      
+      console.log('📅 Programando repaso con userId:', userId);
+      
+      const res = await fetch('/api/v1/calendar/create-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        },
+          body: JSON.stringify({
+          userId: userId,
+          documentId: documentId,
+          documentName: documentData?.name || documentData?.filename || 'Documento',
+          daysOfWeek: scheduleDays,
+          time: scheduleTime,
+          durationWeeks: scheduleDuration, // Duración en semanas (0 = infinito)
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        })
+      });
+
+      console.log('📡 Respuesta del servidor:', res.status, res.statusText);
+      
+      if (res.ok) {
+        let data;
+        try {
+          const text = await res.text();
+          console.log('📄 Respuesta raw:', text);
+          data = JSON.parse(text);
+        } catch (parseError) {
+          console.error('❌ Error al parsear respuesta JSON:', parseError);
+          throw new Error('Error al procesar la respuesta del servidor');
+        }
+        
+        console.log('✅ Evento creado:', data);
+        
+        // El backend siempre devuelve success: true cuando es exitoso
+        const eventInfo = data.eventId ? `\n\nEvento ID: ${data.eventId}` : '';
+        const startTime = data.startTime ? `\n\nPrimera ocurrencia: ${new Date(data.startTime).toLocaleString('es-CL')}` : '';
+        
+        alert(`✅ Repasos programados exitosamente!${eventInfo}${startTime}\n\nLos eventos recurrentes pueden tardar unos segundos en aparecer en Google Calendar.\n\nPara verlos:\n1. Abre Google Calendar\n2. Busca eventos con el título "📚 Repaso de Pills"\n3. Si no aparecen, recarga la página (F5)\n4. Verifica que estés viendo el calendario principal (no un calendario secundario)`);
+        
+        // Abrir Google Calendar directamente
+        window.open('https://calendar.google.com/calendar/u/0/r', '_blank');
+        setShowScheduleModal(false);
+        setScheduleDays([]);
+        setScheduleTime('09:00');
+        setScheduleDuration(52);
+      } else {
+        let errorMessage = 'Error desconocido';
+        try {
+          const error = await res.json();
+          errorMessage = error.message || errorMessage;
+          console.error('❌ Error del backend:', error);
+        } catch (e) {
+          console.error('❌ Error al parsear respuesta de error:', e);
+          errorMessage = `Error ${res.status}: ${res.statusText}`;
+        }
+        
+        if (errorMessage.includes('no autenticado') || res.status === 401) {
+          alert('Por favor, conecta tu cuenta de Google Calendar primero');
+          connectGoogleCalendar();
+        } else {
+          alert(`Error al programar repasos: ${errorMessage}`);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error al programar repasos:', error);
+      console.error('❌ Stack trace:', error.stack);
+      alert(`Error al programar repasos: ${error.message || 'Error desconocido'}\n\nPor favor, revisa la consola para más detalles.`);
+    } finally {
+      setScheduling(false);
+    }
+  };
+
+  // Toggle día de la semana
+  const toggleDay = (day) => {
+    setScheduleDays(prev => {
+      if (prev.includes(day)) {
+        return prev.filter(d => d !== day);
+      } else {
+        return [...prev, day].sort((a, b) => a - b);
+      }
+    });
   };
 
   const generateAudio = async (voiceTypeToUse = null, voiceStyleToUse = null) => {
@@ -1126,9 +1281,172 @@ export default function Player() {
               <span className="material-symbols-outlined">chat</span>
               <span>{showChat ? "Cerrar chat" : "Conversa con AudIA"}</span>
             </button>
+            <button 
+              className="action-btn"
+              onClick={() => {
+                if (!isGoogleCalendarConnected) {
+                  if (confirm('Para programar repasos, necesitas conectar tu cuenta de Google Calendar. ¿Deseas conectarla ahora?')) {
+                    connectGoogleCalendar();
+                  }
+                } else {
+                  setShowScheduleModal(true);
+                }
+              }}
+            >
+              <span className="material-symbols-outlined">event</span>
+              <span>Programar repasos</span>
+            </button>
           </div>
         </div>
         
+        {/* Modal de programar repasos */}
+        {showScheduleModal && (
+          <div className="voice-modal-overlay" onClick={() => !scheduling && setShowScheduleModal(false)}>
+            <div className="voice-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+              <h3>
+                <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '8px' }}>event_note</span>
+                Programar repasos de Flash Pills
+              </h3>
+              <p>Selecciona los días de la semana, la hora y la duración para recibir recordatorios automáticos</p>
+              
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', marginBottom: '12px', fontWeight: '600', color: 'var(--text, #eae7f6)', fontSize: '14px' }}>
+                  Días de la semana:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                  {[
+                    { value: 1, label: 'Lunes' },
+                    { value: 2, label: 'Martes' },
+                    { value: 3, label: 'Miércoles' },
+                    { value: 4, label: 'Jueves' },
+                    { value: 5, label: 'Viernes' },
+                    { value: 6, label: 'Sábado' },
+                    { value: 0, label: 'Domingo' }
+                  ].map(day => (
+                    <button
+                      key={day.value}
+                      onClick={() => toggleDay(day.value)}
+                      disabled={scheduling}
+                      className="voice-modal-btn"
+                      style={{
+                        padding: '12px 8px',
+                        border: `2px solid ${scheduleDays.includes(day.value) ? 'var(--primary, #7c4dff)' : 'rgba(234, 231, 246, 0.2)'}`,
+                        backgroundColor: scheduleDays.includes(day.value) ? 'rgba(124, 77, 255, 0.2)' : 'transparent',
+                        color: 'var(--text, #eae7f6)',
+                        borderRadius: '8px',
+                        cursor: scheduling ? 'not-allowed' : 'pointer',
+                        fontWeight: scheduleDays.includes(day.value) ? '600' : '400',
+                        fontSize: '14px',
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', marginBottom: '12px', fontWeight: '600', color: 'var(--text, #eae7f6)', fontSize: '14px' }}>
+                  Hora del repaso:
+                </label>
+                <input
+                  type="time"
+                  value={scheduleTime}
+                  onChange={(e) => setScheduleTime(e.target.value)}
+                  disabled={scheduling}
+                  style={{
+                    padding: '12px 16px',
+                    border: '2px solid rgba(234, 231, 246, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    width: '100%',
+                    backgroundColor: 'rgba(234, 231, 246, 0.05)',
+                    color: 'var(--text, #eae7f6)',
+                    fontFamily: 'inherit'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', marginBottom: '12px', fontWeight: '600', color: 'var(--text, #eae7f6)', fontSize: '14px' }}>
+                  Duración de la repetición:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                  {[
+                    { value: 4, label: '4 semanas', desc: '1 mes' },
+                    { value: 8, label: '8 semanas', desc: '2 meses' },
+                    { value: 12, label: '12 semanas', desc: '3 meses' },
+                    { value: 26, label: '26 semanas', desc: '6 meses' },
+                    { value: 52, label: '52 semanas', desc: '1 año' },
+                    { value: 0, label: 'Infinito', desc: 'Sin límite' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setScheduleDuration(option.value)}
+                      disabled={scheduling}
+                      className="voice-modal-btn"
+                      style={{
+                        padding: '12px 8px',
+                        border: `2px solid ${scheduleDuration === option.value ? 'var(--primary, #7c4dff)' : 'rgba(234, 231, 246, 0.2)'}`,
+                        backgroundColor: scheduleDuration === option.value ? 'rgba(124, 77, 255, 0.2)' : 'transparent',
+                        color: 'var(--text, #eae7f6)',
+                        borderRadius: '8px',
+                        cursor: scheduling ? 'not-allowed' : 'pointer',
+                        fontWeight: scheduleDuration === option.value ? '600' : '400',
+                        fontSize: '13px',
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <span>{option.label}</span>
+                      <span style={{ fontSize: '11px', opacity: 0.7 }}>{option.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '32px' }}>
+                <button
+                  onClick={() => {
+                    setShowScheduleModal(false);
+                    setScheduleDays([]);
+                    setScheduleTime('09:00');
+                    setScheduleDuration(52);
+                  }}
+                  disabled={scheduling}
+                  className="voice-modal-cancel"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleScheduleReview}
+                  disabled={scheduling || scheduleDays.length === 0}
+                  style={{
+                    padding: '12px 24px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    backgroundColor: scheduling || scheduleDays.length === 0 ? 'rgba(234, 231, 246, 0.2)' : 'var(--primary, #7c4dff)',
+                    color: 'white',
+                    cursor: scheduling || scheduleDays.length === 0 ? 'not-allowed' : 'pointer',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {scheduling ? 'Programando...' : 'Programar repasos'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal de voz personalizada */}
         {showVoiceCustomModal && (
           <div className="voice-modal-overlay" onClick={() => setShowVoiceCustomModal(false)}>
