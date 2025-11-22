@@ -29,10 +29,16 @@ export default function FlashPills() {
   // Cleanup: detener audio cuando el componente se desmonte
   useEffect(() => {
     return () => {
+      console.log("🛑 Deteniendo audio al salir de Flash Pills");
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = '';
+        // Limpiar event listeners
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
+        audioRef.current.onpause = null;
       }
+      setPlayingAudio(null);
     };
   }, []);
 
