@@ -8,6 +8,7 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [chatModel, setChatModel] = useState('gemini-2.5-flash'); // Modelo de Gemini a usar
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -56,7 +57,10 @@ export default function Chat() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ message: inputMessage })
+        body: JSON.stringify({ 
+          message: inputMessage,
+          model: chatModel
+        })
       });
 
       if (!res.ok) throw new Error("Error al obtener respuesta");
@@ -126,10 +130,34 @@ export default function Chat() {
 
       <main className="chat-main">
         <div className="chat-header">
-          <h2 className="chat-title">Asistente Conversacional</h2>
-          <p className="chat-subtitle">
-            Haz preguntas sobre tus documentos y recibe respuestas contextualizadas
-          </p>
+          <h2 className="chat-title">Conversa con AudIA</h2>
+          <div className="chat-subtitle">
+            <p style={{ margin: '0 0 8px 0' }}>
+              Haz preguntas sobre tus documentos y recibe respuestas contextualizadas
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: '#666' }}>
+                Modelo:
+              </span>
+              <select
+                value={chatModel}
+                onChange={(e) => setChatModel(e.target.value)}
+                style={{
+                  fontSize: '12px',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ddd',
+                  background: '#fff',
+                  color: '#333',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                <option value="gemini-pro">gemini-pro</option>
+                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="chat-messages">

@@ -141,6 +141,13 @@
   color: var(--text, #eae7f6);
 }
 
+.chat-panel-header p {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: rgba(234, 231, 246, 0.7);
+  font-weight: normal;
+}
+
 .close-chat-btn {
   background: none;
   border: none;
